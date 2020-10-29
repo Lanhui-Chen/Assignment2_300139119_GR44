@@ -75,7 +75,11 @@ public class ClientConsole implements ChatIF
       while (true) 
       {
         message = fromConsole.readLine();
-        client.handleMessageFromClientUI(message);
+        char[] tempMessage = message.trim().toCharArray();
+        if(tempMessage[0] == '#') {
+        	client.control(message);
+        }else
+        	client.handleMessageFromClientUI(message);
       }
     } 
     catch (Exception ex) 
