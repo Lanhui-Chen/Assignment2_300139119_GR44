@@ -64,11 +64,14 @@ public class ChatClient extends AbstractClient
    *
    * @param message The message from the UI.    
    */
+  //Call a detect method for checking server shut down, Change for E49 - LHC
   public void handleMessageFromClientUI(String message)
   {
     try
     {
+    	
       sendToServer(message);
+      checkConnection();
     }
     catch(IOException e)
     {
@@ -76,6 +79,42 @@ public class ChatClient extends AbstractClient
         ("Could not send message to server.  Terminating client.");
       quit();
     }
+  }
+  
+  //detect method which calls the isConnected() method every 4 seconds, then quit if !isConnected(), E49 - LHC
+  public void checkConnection() {
+	  int count = 0;
+	  
+	  while(count!= 10)
+	  {
+		  try 
+		  {
+			  if(!isConnected()) 
+			  {
+				  quit();
+				  break;
+			  }
+			  
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+			
+			clientUI.display("error");
+			e.printStackTrace();
+		}
+		  count++;  
+	  }
+  }
+  
+  //Shut down message
+  public void connectionClosed() 
+  {
+	  clientUI.display("Server has shut down");
+  }
+  
+  //connection error message
+  public void connectionException(Exception exception) 
+  {
+	  clientUI.display("An exception has occur, and the server is terminated");
   }
   
   /**
